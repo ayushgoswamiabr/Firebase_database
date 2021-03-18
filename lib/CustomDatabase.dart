@@ -10,9 +10,11 @@ class CustomDatabase extends StatefulWidget {
 }
 
 class _CustomDatabaseState extends State<CustomDatabase> {
+  List lists;
   final referncedatabase = FirebaseDatabase.instance;
   final moviename = 'Movie Title';
   final moviecontroller = TextEditingController();
+  String movieName;
   @override
   Widget build(BuildContext context) {
     final ref = referncedatabase.reference();
@@ -29,22 +31,42 @@ class _CustomDatabaseState extends State<CustomDatabase> {
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
-                  TextField(
-                    controller: moviecontroller,
-                    textAlign: TextAlign.center,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: moviecontroller,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  FlatButton(
-                    onPressed: () {
-                      ref
-                          .child('Movies')
-                          .push()
-                          .child(moviename)
-                          .set(moviecontroller.text)
-                          .asStream();
-                      moviecontroller.clear();
-                    },
-                    child: Text("Save Movie"),
-                  )
+                  Column(
+                    children: [
+                      FlatButton(
+                        onPressed: () {
+                          ref
+                              .child('Movies')
+                              .push()
+                              .child(moviename)
+                              .set(moviecontroller.text)
+                              .asStream();
+
+                          moviecontroller.clear();
+                        },
+                        child: Text("Save Movie"),
+                      ),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          ref.once().then((DataSnapshot snapshot) {
+                            Map<dynamic, dynamic> values = snapshot.value;
+                            print(values);
+                          });
+                        },
+                        child: Text("Read data"),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             )
